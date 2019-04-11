@@ -11,8 +11,3 @@ class NCFile:
         nc_file.close()
 
         return var
-
-
-file = NCFile(path='../ARCTIC_1h_ice_grid_TUV_20130619-20130619.nc')
-
-print(file.variable('iceconc'))

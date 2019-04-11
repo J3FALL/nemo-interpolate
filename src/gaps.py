@@ -1,4 +1,9 @@
+import random
+from datetime import datetime
+
 import numpy as np
+
+random.seed(datetime.now())
 
 
 class GapsGenerator:
@@ -6,7 +11,22 @@ class GapsGenerator:
         pass
 
     def add_gaps_in_random_points(self, source_field, amount):
-        raise NotImplementedError
+        x_len, y_len = source_field.shape
+
+        points = []
+        while len(points) < amount:
+            point = (random.randint(0, x_len - 1), random.randint(0, y_len - 1))
+
+            if point not in points:
+                points.append(point)
+
+        gap_mask = np.ones(shape=source_field.shape)
+
+        for point in points:
+            x, y = point
+            gap_mask[x, y] = 0.0
+
+        return np.multiply(source_field, gap_mask)
 
     def add_gaps_on_boundaries(self, source_field, side, width):
         x_range, y_range = indexes_of_boarder(source_field.shape, side, width)

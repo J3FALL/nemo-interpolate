@@ -33,6 +33,19 @@ class LabelingParams:
         self.full_field_size = full_field_size
         self.borders = borders
 
+        self.squares_amount = self.__squares_amount()
+
+    def __squares_amount(self):
+        amount = 0
+        for border in self.borders:
+            x_from, x_to = border['x']
+            y_from, y_to = border['y']
+            squares_by_x = (x_to - x_from) // self.square_size
+            squares_by_y = (y_to - y_from) // self.square_size
+
+            amount += squares_by_x * squares_by_y
+        return amount
+
     def is_inside(self, x, y):
         for border in self.borders:
             x_border = border['x']
@@ -75,7 +88,11 @@ def sat_images_from_dir(path, month):
 
 
 if __name__ == '__main__':
-    samples = sat_dataset_with_labels(path='D:\ice_recovered_from_hybrid\conc_satellite', month=MONTH_BY_IDX['May'])
+    label_params = LabelingParams.default_params()
+    print(f'Amount of squares: {label_params.squares_amount}')
+
+    samples = sat_dataset_with_labels(path='D:\ice_recovered_from_hybrid\conc_satellite', month=MONTH_BY_IDX['May'],
+                                      label_params=label_params)
     print(f'May samples total: {len(samples)}')
 
     print(f'nc_file path: {samples[10000].path}')

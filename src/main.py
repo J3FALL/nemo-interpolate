@@ -1,18 +1,37 @@
-import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 
-from src.flies import NCFile
-from src.gaps import GapsGenerator
-from src.viz import filled_map
+from src.dataset import (
+    LabelingParams,
+    sat_dataset_with_labels
+)
+from src.flies import (
+    NCHandler,
+    NCFile
+)
+from src.models.auto_encoder import AutoEncoder
+
+
+def train_model():
+    label_params = LabelingParams.default_params()
+
+    samples = sat_dataset_with_labels(path='D:\ice_recovered_from_hybrid\conc_satellite', month='May',
+                                      label_params=label_params)
+
+    test = samples[:50]
+    handler = NCHandler()
+
+    for sample in test:
+        nc_file = NCFile(sample.path)
+        _ = handler.values(nc_file=nc_file, variable_name='ice_conc')
+    handler.clear()
+
+    train_set, test_set = train_test_split(samples, test_size=0.2)
+
+    input_shape = (label_params.square_size, label_params.square_size, 1)
+    model = AutoEncoder(input_shape=input_shape, kernel_size=3, latent_dim=32, layer_filters=[32, 64])
+    model.init(print_summary=True)
+    model.compile()
+
 
 if __name__ == '__main__':
-    file = NCFile(path='../ARCTIC_1h_ice_grid_TUV_20130619-20130619.nc')
-    conc = file.variable(name='iceconc')
-
-    lat = file.variable(name='nav_lat')
-    lon = file.variable(name='nav_lon')
-
-    generator = GapsGenerator()
-    conc = generator.add_gaps_on_boundaries(source_field=conc[0], side='left', width=10)
-    map = filled_map(values=conc, lon=lon, lat=lat)
-
-    plt.show()
+    train_model()

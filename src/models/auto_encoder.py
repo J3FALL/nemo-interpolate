@@ -79,8 +79,3 @@ class AutoEncoder:
                                     activation='relu',
                                     padding='same')(layer)
         return layer
-
-
-model = AutoEncoder(input_shape=(100, 100, 1), kernel_size=3, latent_dim=32, layer_filters=[32, 64])
-model.init(print_summary=True)
-model.compile()

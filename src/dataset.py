@@ -66,7 +66,7 @@ class Sample:
 
 
 def sat_dataset_with_labels(path, month, label_params=LabelingParams.default_params()):
-    files = sat_images_from_dir(path, month)
+    files = sat_images_from_dir(path, MONTH_BY_IDX[month])
     samples = []
     for file in files:
         square_idx = 0

@@ -62,6 +62,10 @@ class AutoEncoder:
     def compile(self, loss='mse', optimizer='adam'):
         self.auto_encoder.compile(loss=loss, optimizer=optimizer)
 
+    def fit_generator(self, **kwargs):
+        self.auto_encoder.fit_generator(generator=kwargs['generator'],
+                                        validation_data=kwargs['validation_data'])
+
     def __stack_conv_layers(self, layer):
         for filter in self.layer_filters:
             layer = Conv2D(filters=filter,

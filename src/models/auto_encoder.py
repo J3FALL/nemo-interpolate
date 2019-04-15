@@ -1,3 +1,4 @@
+import numpy as np
 from keras import backend as K
 from keras.layers import Activation, Dense, Input
 from keras.layers import Conv2D, Flatten
@@ -64,7 +65,17 @@ class AutoEncoder:
 
     def fit_generator(self, **kwargs):
         self.auto_encoder.fit_generator(generator=kwargs['generator'],
-                                        validation_data=kwargs['validation_data'])
+                                        validation_data=kwargs['validation_data'],
+                                        workers=4,
+                                        epochs=1)
+
+    def predict(self, dataset, handler):
+        sub_fields = np.zeros(shape=(len(dataset), *self.input_shape))
+        for idx, sample in enumerate(dataset):
+            sub_fields[idx] = np.stack(arrays=[handler.subfield(sample=sample)], axis=2)
+
+        predicted = self.auto_encoder.predict(sub_fields)
+        return predicted, sub_fields
 
     def __stack_conv_layers(self, layer):
         for filter in self.layer_filters:

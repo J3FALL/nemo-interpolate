@@ -15,7 +15,6 @@ class NCGenerator(keras.utils.Sequence):
 
     def __getitem__(self, index):
         batch = self.samples[index * self.batch_size:(index + 1) * self.batch_size]
-        # batch = [self.samples[idx] for idx in indexes]
 
         X, y = self.__data_generation(batch)
 
